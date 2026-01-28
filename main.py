@@ -6,7 +6,7 @@ import warnings
 warnings.filterwarnings('ignore', message='Unverified HTTPS request')
 
 # ========== 配置区域 ==========
-DEEPSEEK_API_KEY = "sk-084fc8c72ac04499b41a66945265c511"
+DEEPSEEK_API_KEY = "sk"
 OUTPUT_FILE = "ai_brief_today.html"
 DISABLE_SSL_VERIFY = True
 
