@@ -1,0 +1,1952 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>华为打工模拟器 v3.0 🏢</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .game-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 1000px;
+            margin: 0 auto;
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #e60012, #c50011);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+        }
+
+        .version {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        .header h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+
+        .tabs {
+            display: flex;
+            background: #f0f0f0;
+            border-bottom: 2px solid #e60012;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            background: #f0f0f0;
+            border: none;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .tab:hover {
+            background: #e0e0e0;
+        }
+
+        .tab.active {
+            background: white;
+            color: #e60012;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .player-info {
+            background: #f8f9fa;
+            padding: 25px;
+            border-bottom: 3px solid #e60012;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .info-item {
+            background: white;
+            padding: 12px 20px;
+            border-radius: 12px;
+            flex: 1;
+            min-width: 140px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .info-label {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .info-value {
+            font-size: 18px;
+            font-weight: bold;
+            color: #e60012;
+        }
+
+        .info-value.small {
+            font-size: 14px;
+        }
+
+        .progress-bar {
+            background: #e0e0e0;
+            height: 25px;
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 15px 0;
+            position: relative;
+        }
+
+        .progress-fill {
+            background: linear-gradient(90deg, #e60012, #ff3333);
+            height: 100%;
+            transition: width 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .actions {
+            padding: 25px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+        }
+
+        .btn {
+            padding: 15px 20px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-primary { background: #e60012; color: white; }
+        .btn-secondary { background: #4CAF50; color: white; }
+        .btn-warning { background: #ff9800; color: white; }
+        .btn-info { background: #2196F3; color: white; }
+        .btn-purple { background: #9C27B0; color: white; }
+        .btn-dark { background: #333; color: white; }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn small {
+            display: block;
+            font-size: 12px;
+            opacity: 0.9;
+            margin-top: 3px;
+        }
+
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            border-left: 4px solid #e60012;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transform: translateX(5px);
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .card-subtitle {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .card-reward {
+            color: #4CAF50;
+            font-size: 14px;
+            margin: 5px 0;
+        }
+
+        .card-price {
+            color: #e60012;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            animation: slideDown 0.3s ease;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        @keyframes slideDown {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+
+        .modal-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .modal-description {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #333;
+            padding-left: 15px;
+            border-left: 4px solid #e60012;
+        }
+
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            padding: 20px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .stat-card-value {
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .stat-card-label {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .leaderboard-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: white;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            border-left: 4px solid #e60012;
+        }
+
+        .leaderboard-rank {
+            font-size: 24px;
+            font-weight: bold;
+            color: #e60012;
+            min-width: 40px;
+        }
+
+        .leaderboard-name {
+            flex: 1;
+            margin-left: 15px;
+        }
+
+        .leaderboard-score {
+            font-weight: bold;
+            color: #4CAF50;
+        }
+
+        .qte-game {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .qte-button {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            font-size: 48px;
+            border: none;
+            cursor: pointer;
+            margin: 10px;
+            transition: all 0.2s;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .qte-button:active {
+            transform: scale(0.9);
+        }
+
+        .qte-timer {
+            font-size: 24px;
+            font-weight: bold;
+            margin: 20px 0;
+            color: #e60012;
+        }
+
+        .stock-chart {
+            height: 200px;
+            background: #f0f0f0;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stock-line {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+            height: 2px;
+            background: #e60012;
+        }
+
+        .achievement-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            margin: 5px;
+        }
+
+        .choice-btn {
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            text-align: left;
+            background: #f8f9fa;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .choice-btn:hover {
+            background: #e60012;
+            color: white;
+            border-color: #e60012;
+        }
+
+        .property-owned {
+            background: #4CAF50;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 5px;
+            font-size: 11px;
+            margin-left: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .info-row { flex-direction: column; }
+            .actions { grid-template-columns: 1fr 1fr; }
+            .modal-content { padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <!-- 头部 -->
+        <div class="header">
+            <div class="version">v3.0 完整版</div>
+            <h1 ondblclick="resetGame()">🏢 华为打工模拟器</h1>
+            <p>从应届生到总裁的奋斗之路 | 双击标题重置游戏</p>
+        </div>
+
+        <!-- 标签页 -->
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('main')">🏠 主界面</button>
+            <button class="tab" onclick="switchTab('career')">💼 职业</button>
+            <button class="tab" onclick="switchTab('life')">🏡 生活</button>
+            <button class="tab" onclick="switchTab('stats')">📊 统计</button>
+        </div>
+
+        <!-- 主界面 -->
+        <div id="main-tab" class="tab-content active">
+            <div class="player-info">
+                <div class="info-row">
+                    <div class="info-item">
+                        <div class="info-label">👤 姓名</div>
+                        <div class="info-value small" id="player-name">加载中...</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">🎯 职级</div>
+                        <div class="info-value" id="level">13级 工程师</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">📈 通道</div>
+                        <div class="info-value small" id="career-path">技术通道</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">💰 年薪</div>
+                        <div class="info-value" id="salary">¥220,000</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">📊 绩效</div>
+                        <div class="info-value" id="performance">B+</div>
+                    </div>
+                </div>
+
+                <div class="info-row">
+                    <div class="info-item">
+                        <div class="info-label">💎 华为股</div>
+                        <div class="info-value" id="stock">0 股</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">💵 股票价值</div>
+                        <div class="info-value" id="stock-value">¥0</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">🏦 存款</div>
+                        <div class="info-value" id="money">¥0</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">📅 工龄</div>
+                        <div class="info-value" id="days">0 天</div>
+                    </div>
+                </div>
+
+                <div class="info-label">🎯 KPI进度</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="kpi-progress">0 / 1000</div>
+                </div>
+
+                <div class="info-label">⏰ 距离年度考核</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="year-progress" style="background: linear-gradient(90deg, #4CAF50, #66BB6A);">365 天</div>
+                </div>
+            </div>
+
+            <div class="actions">
+                <button class="btn btn-primary" onclick="writeCode()">💻 写代码<br><small>+10 KPI</small></button>
+                <button class="btn btn-secondary" onclick="meeting()">🗣️ 开会<br><small>+5 KPI</small></button>
+                <button class="btn btn-warning" onclick="study()">📚 学习<br><small>提升能力</small></button>
+                <button class="btn btn-info" onclick="showProjects()">📋 做项目<br><small>大量KPI</small></button>
+                <button class="btn btn-purple" onclick="applyPatent()">📜 申请专利<br><small id="patent-cost">¥20,000</small></button>
+                <button class="btn btn-dark" onclick="showOverseas()">🌍 海外派遣<br><small>高风险高回报</small></button>
+            </div>
+        </div>
+
+        <!-- 职业标签页 -->
+        <div id="career-tab" class="tab-content">
+            <div style="padding: 25px;">
+                <h3 class="section-title">💼 职业发展</h3>
+                
+                <div class="card" onclick="switchCareerPath()">
+                    <div class="card-title">🔀 切换职业通道</div>
+                    <div class="card-subtitle">当前: <span id="current-path">技术通道</span></div>
+                    <div class="card-reward" id="switch-requirement">15级以上可切换到管理通道</div>
+                </div>
+
+                <div class="card" onclick="showPromotionReview()">
+                    <div class="card-title">🎤 述职答辩</div>
+                    <div class="card-subtitle">向评委会展示成果，争取晋升</div>
+                    <div class="card-reward">需要: KPI达标 + 通过答辩</div>
+                </div>
+
+                <div class="card" onclick="showJobHopping()">
+                    <div class="card-title">💼 跳槽机会</div>
+                    <div class="card-subtitle">收到其他公司的offer</div>
+                    <div class="card-reward" id="job-offers">暂无offer</div>
+                </div>
+
+                <h3 class="section-title" style="margin-top: 30px;">📜 专利列表</h3>
+                <div id="patent-list">
+                    <div style="color: #999; text-align: center; padding: 20px;">
+                        还没有专利，快去申请吧！
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 生活标签页 -->
+        <div id="life-tab" class="tab-content">
+            <div style="padding: 25px;">
+                <h3 class="section-title">🏡 生活与资产</h3>
+
+                <div class="info-row" style="margin-bottom: 25px;">
+                    <div class="info-item">
+                        <div class="info-label">💑 婚姻状态</div>
+                        <div class="info-value small" id="marriage-status">单身</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">🏠 房产</div>
+                        <div class="info-value small" id="house-status">无房产</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">🚗 车辆</div>
+                        <div class="info-value small" id="car-status">无车</div>
+                    </div>
+                </div>
+
+                <h3 class="section-title">🏡 生活与资产</h3>
+                
+                <div class="card" onclick="buyHouse('shenzhenwan')">
+                    <div class="card-title">🌟 深圳湾豪宅大平层 <span id="shenzhenwan-owned"></span></div>
+                    <div class="card-subtitle">200㎡ 海景豪装 | 顶级富人区 | 俯瞰深圳湾</div>
+                    <div class="card-price">售价: ¥25,000,000 | 每月房贷: -¥78,000</div>
+                    <div class="card-reward">增值潜力: ⭐⭐⭐⭐⭐⭐ | 身份象征: Fellow级别专属 | 通勤: 15分钟</div>
+                </div>
+
+                <div class="card" onclick="buyHouse('shenzhen')">
+                    <div class="card-title">深圳南山区 <span id="shenzhen-owned"></span></div>
+                    <div class="card-subtitle">80㎡ 精装两房 | 靠近华为总部</div>
+                    <div class="card-price">售价: ¥8,000,000 | 每月房贷: -¥25,000</div>
+                    <div class="card-reward">增值潜力: ⭐⭐⭐⭐⭐ | 通勤时间: 20分钟</div>
+                </div>
+
+                <div class="card" onclick="buyHouse('dongguan')">
+                    <div class="card-title">东莞松山湖 <span id="dongguan-owned"></span></div>
+                    <div class="card-subtitle">100㎡ 精装三房 | 靠近华为研发中心</div>
+                    <div class="card-price">售价: ¥3,000,000 | 每月房贷: -¥9,500</div>
+                    <div class="card-reward">增值潜力: ⭐⭐⭐⭐ | 通勤时间: 30分钟</div>
+                </div>
+
+                <div class="card" onclick="buyHouse('hometown')">
+                    <div class="card-title">老家县城 <span id="hometown-owned"></span></div>
+                    <div class="card-subtitle">120㎡ 三房 | 父母养老</div>
+                    <div class="card-price">售价: ¥500,000 | 全款无压力</div>
+                    <div class="card-reward">增值潜力: ⭐⭐ | 孝心: ⭐⭐⭐⭐⭐</div>
+                </div>
+
+                <h3 class="section-title" style="margin-top: 30px;">🚗 购车选择</h3>
+                
+                <div class="card" onclick="buyCar('porsche')">
+                    <div class="card-title">🏎️ 保时捷911 <span id="porsche-owned"></span></div>
+                    <div class="card-subtitle">经典跑车 | 身份象征 | 0-100km/h 3.0s</div>
+                    <div class="card-price">售价: ¥1,500,000 | 彰显成功</div>
+                    <div class="card-reward">需要: 16级以上 | 炫酷指数: ⭐⭐⭐⭐⭐</div>
+                </div>
+
+                <div class="card" onclick="buyCar('wenjie')">
+                    <div class="card-title">🚙 华为问界M9 <span id="wenjie-owned"></span></div>
+                    <div class="card-subtitle">华为智选车 | 鸿蒙座舱 | 智能驾驶</div>
+                    <div class="card-price">售价: ¥500,000 | 员工优惠价</div>
+                    <div class="card-reward">华为员工特供 | 智能化: ⭐⭐⭐⭐⭐ | 可获内部折扣</div>
+                </div>
+
+                <div class="card" onclick="buyCar('aito')">
+                    <div class="card-title">🚗 AITO问界M7 <span id="aito-owned"></span></div>
+                    <div class="card-subtitle">华为智选 | 性价比之选</div>
+                    <div class="card-price">售价: ¥300,000 | 实惠之选</div>
+                    <div class="card-reward">新人推荐 | 性价比: ⭐⭐⭐⭐⭐</div>
+                </div>
+
+                <h3 class="section-title" style="margin-top: 30px;">💑 婚姻大事</h3>
+                
+                <div class="card" onclick="findPartner('internal')">
+                    <div class="card-title">华为内部征婚</div>
+                    <div class="card-subtitle">找同事做伴侣，共同奋斗</div>
+                    <div class="card-reward">优点: 理解工作 +10%工作效率 | 可能获得双职工福利</div>
+                </div>
+
+                <div class="card" onclick="findPartner('external')">
+                    <div class="card-title">外部恋爱</div>
+                    <div class="card-subtitle">在外面找对象</div>
+                    <div class="card-reward">优点: 生活平衡 | 缺点: 可能不理解加班</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 统计标签页 -->
+        <div id="stats-tab" class="tab-content">
+            <div class="stat-grid">
+                <div class="stat-card">
+                    <div class="stat-card-value" id="stat-total-kpi">0</div>
+                    <div class="stat-card-label">累计KPI</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-card-value" id="stat-total-projects">0</div>
+                    <div class="stat-card-label">完成项目</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-card-value" id="stat-total-patents">0</div>
+                    <div class="stat-card-label">专利数量</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-card-value" id="stat-promotions">0</div>
+                    <div class="stat-card-label">晋升次数</div>
+                </div>
+            </div>
+
+            <div style="padding: 25px;">
+                <h3 class="section-title">🏆 成就系统</h3>
+                <div id="achievement-list">
+                    <div style="color: #999; text-align: center; padding: 20px;">
+                        努力工作，解锁成就！
+                    </div>
+                </div>
+
+                <h3 class="section-title" style="margin-top: 30px;">📊 全服排行榜</h3>
+                <div id="leaderboard">
+                    <div class="leaderboard-item">
+                        <div class="leaderboard-rank">1</div>
+                        <div class="leaderboard-name">
+                            <div style="font-weight: bold;">张三</div>
+                            <div style="font-size: 12px; color: #666;">20级 Fellow</div>
+                        </div>
+                        <div class="leaderboard-score">工龄: 3650天</div>
+                    </div>
+                    <div class="leaderboard-item">
+                        <div class="leaderboard-rank">2</div>
+                        <div class="leaderboard-name">
+                            <div style="font-weight: bold;">李四</div>
+                            <div style="font-size: 12px; color: #666;">19级 首席科学家</div>
+                        </div>
+                        <div class="leaderboard-score">工龄: 3200天</div>
+                    </div>
+                    <div class="leaderboard-item">
+                        <div class="leaderboard-rank">3</div>
+                        <div class="leaderboard-name">
+                            <div style="font-weight: bold;">王五</div>
+                            <div style="font-size: 12px; color: #666;">18级 顶级专家</div>
+                        </div>
+                        <div class="leaderboard-score">工龄: 2800天</div>
+                    </div>
+                    <div class="leaderboard-item" style="border-color: #4CAF50;">
+                        <div class="leaderboard-rank" style="color: #4CAF50;">...</div>
+                        <div class="leaderboard-name">
+                            <div style="font-weight: bold;">你</div>
+                            <div style="font-size: 12px; color: #666;" id="your-rank-info">13级 工程师</div>
+                        </div>
+                        <div class="leaderboard-score" id="your-rank-days">工龄: 0天</div>
+                    </div>
+                </div>
+
+                <h3 class="section-title" style="margin-top: 30px;">📈 华为股票走势</h3>
+                <div class="stock-chart">
+                    <canvas id="stock-canvas" width="600" height="160"></canvas>
+                </div>
+                <div style="text-align: center; margin-top: 10px;">
+                    <div>当前股价: <span id="current-stock-price" style="font-size: 24px; font-weight: bold; color: #e60012;">¥100</span></div>
+                    <div style="margin: 15px 0; color: #666; font-size: 14px;">
+                        持有: <span id="stock-amount" style="font-weight: bold; color: #e60012;">0</span>万股 
+                        | 总值: <span id="total-stock-value" style="font-weight: bold; color: #4CAF50;">¥0</span>
+                    </div>
+                    <button class="btn btn-primary" onclick="buyStock()" style="margin-top: 10px;">买入 1万股 (<span id="buy-cost">¥100万</span>)</button>
+                    <button class="btn btn-secondary" onclick="sellStock()" style="margin-top: 10px;">卖出 1万股</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 模态框 -->
+        <div id="modal" class="modal">
+            <div class="modal-content">
+                <div class="modal-icon" id="modal-icon">🎉</div>
+                <div class="modal-title" id="modal-title">标题</div>
+                <div class="modal-description" id="modal-description">描述</div>
+                <div class="modal-buttons" id="modal-buttons">
+                    <button class="btn btn-primary" onclick="closeModal()">确定</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==================== 游戏数据 ====================
+        let gameData = {
+            // 基础属性
+            playerName: '',
+            level: 13,
+            levelName: '工程师',
+            careerPath: 'tech', // tech or management
+            salary: 220000,
+            performance: 'B+',
+            kpi: 0,
+            kpiTarget: 1000,
+            stock: 0, // 改为万股为单位
+            stockPrice: 100,
+            stockHistory: [100],
+            money: 0,
+            days: 0,
+            daysUntilReview: 365,
+            
+            // 技能
+            skills: {
+                coding: 1,
+                communication: 1,
+                management: 0,
+                patents: 0
+            },
+            
+            // 生活
+            married: false,
+            marriageType: null, // internal or external
+            houses: {
+                shenzhenwan: false,
+                shenzhen: false,
+                dongguan: false,
+                hometown: false
+            },
+            cars: {
+                porsche: false,
+                wenjie: false,
+                aito: false
+            },
+            
+            // 统计
+            stats: {
+                totalKPI: 0,
+                totalProjects: 0,
+                totalPatents: 0,
+                promotions: 0,
+                overseasDays: 0
+            },
+            
+            // 其他
+            patents: [],
+            achievements: [],
+            currentProject: null,
+            overseasLocation: null
+        };
+
+        // 谐音梗姓名库
+        const FUNNY_NAMES = [
+            '郝苑工', // 好员工
+            '贝国霞', // 被裁掉
+            '霍车头', // 火车头
+            '程续猿', // 程序员
+            '甘加班', // 敢加班
+            '史大佬', // 是大佬
+            '牛比哄', // 牛逼哄
+            '陆续涨', // 陆续涨
+            '曹作者', // 操作者
+            '范统筹', // 饭桶愁
+            '尤升值', // 有升职
+            '高瑞华', // 高薪华
+            '司恭资', // 思工资
+            '严大牛', // 研大牛
+            '钟点工', // 钟点工
+            '卓跃先', // 卓越鲜
+            '秦奋斗', // 勤奋斗
+            '赖加班', // 来加班
+            '许加薪', // 需加薪
+            '马不停', // 马不停
+        ];
+
+        // 职级配置
+        const LEVELS = {
+            tech: {
+                13: { name: '工程师', salary: 220000, kpiTarget: 1000 },
+                14: { name: '资深工程师', salary: 280000, kpiTarget: 1500 },
+                15: { name: '高级工程师', salary: 380000, kpiTarget: 2000 },
+                16: { name: '资深专家', salary: 550000, kpiTarget: 3000 },
+                17: { name: '高级专家', salary: 850000, kpiTarget: 5000 },
+                18: { name: '顶级专家', salary: 1500000, kpiTarget: 8000 },
+                19: { name: '首席科学家', salary: 3000000, kpiTarget: 15000 },
+                20: { name: 'Fellow', salary: 5000000, kpiTarget: 30000 }
+            },
+            management: {
+                15: { name: '主管', salary: 400000, kpiTarget: 2000 },
+                16: { name: '经理', salary: 600000, kpiTarget: 3000 },
+                17: { name: '部门总监', salary: 1000000, kpiTarget: 5000 },
+                18: { name: '副总裁', salary: 2000000, kpiTarget: 8000 },
+                19: { name: '高级副总裁', salary: 4000000, kpiTarget: 15000 },
+                20: { name: '总裁', salary: 8000000, kpiTarget: 30000 },
+                22: { name: 'CEO', salary: 20000000, kpiTarget: 50000 }
+            }
+        };
+
+        // 扩展的随机事件库
+        const EVENTS = [
+            { icon: '🎉', title: '项目获客户认可', desc: 'KPI +100', effect: () => { gameData.kpi += 100; } },
+            { icon: '📜', title: '专利申请成功', desc: '¥50,000奖金', effect: () => { gameData.money += 50000; addPatent('临时专利'); } },
+            { icon: '😰', title: '项目延期被批评', desc: 'KPI -50', effect: () => { gameData.kpi = Math.max(0, gameData.kpi - 50); } },
+            { icon: '🎖️', title: '明日之星计划', desc: 'KPI +200', effect: () => { gameData.kpi += 200; addAchievement('明日之星'); } },
+            { icon: '💰', title: '公司分红到账', desc: '随机金额', effect: () => { const bonus = Math.floor(Math.random() * 100000 + 50000); gameData.money += bonus; showModal('💰', '分红到账', `收到分红: ¥${bonus.toLocaleString()}`); } },
+            { icon: '🔥', title: '竞争对手挖角', desc: '团队不稳', effect: () => { showModal('🔥', '竞争对手挖角', '团队有人离职，项目进度受影响'); } },
+            { icon: '🏆', title: '获得公司嘉奖', desc: 'KPI +150', effect: () => { gameData.kpi += 150; addAchievement('获得嘉奖'); } },
+            { icon: '📱', title: '新产品发布成功', desc: 'KPI +300', effect: () => { gameData.kpi += 300; } },
+            { icon: '🌟', title: '技术突破', desc: '专利+能力提升', effect: () => { gameData.skills.coding += 1; addPatent('技术突破专利'); } },
+            { icon: '😫', title: '连续加班一周', desc: '疲劳度上升', effect: () => { showModal('😫', '太累了', '连续加班，建议注意休息'); } },
+            { icon: '🎁', title: '股票奖励', desc: '+10股', effect: () => { gameData.stock += 10; showModal('🎁', '股票奖励', '获得10股华为股票！'); } },
+            { icon: '📊', title: '季度考核优秀', desc: 'KPI +80', effect: () => { gameData.kpi += 80; } },
+            { icon: '🚀', title: '项目提前完成', desc: 'KPI +200 + ¥30,000', effect: () => { gameData.kpi += 200; gameData.money += 30000; } },
+            { icon: '💡', title: '创新提案被采纳', desc: 'KPI +120', effect: () => { gameData.kpi += 120; } },
+            { icon: '🌍', title: '国际会议发表论文', desc: '声望大增', effect: () => { gameData.kpi += 150; addAchievement('国际影响力'); } }
+        ];
+
+        // ==================== 初始化 ====================
+        function init() {
+            loadGame();
+            
+            // 如果是新游戏，随机生成姓名
+            if (!gameData.playerName) {
+                gameData.playerName = FUNNY_NAMES[Math.floor(Math.random() * FUNNY_NAMES.length)];
+                saveGame();
+            }
+            
+            updateUI();
+            drawStockChart();
+            setInterval(updateStock, 5000); // 每5秒更新股价
+        }
+
+        // ==================== 核心功能 ====================
+        function writeCode() {
+            gameData.kpi += 10;
+            gameData.skills.coding += 0.1;
+            gameData.stats.totalKPI += 10;
+            advanceDay(1);
+            checkRandomEvent(0.1);
+            updateUI();
+            saveGame();
+        }
+
+        function meeting() {
+            gameData.kpi += 5;
+            gameData.skills.communication += 0.1;
+            gameData.stats.totalKPI += 5;
+            advanceDay(0.5);
+            checkRandomEvent(0.15);
+            updateUI();
+            saveGame();
+        }
+
+        function study() {
+            const skills = ['coding', 'communication', 'management'];
+            const randomSkill = skills[Math.floor(Math.random() * skills.length)];
+            gameData.skills[randomSkill] += 0.5;
+            advanceDay(1);
+            showModal('📚', '技能提升', `${randomSkill} +0.5`);
+            updateUI();
+            saveGame();
+        }
+
+        function showProjects() {
+            const projects = [
+                { name: '基站优化', days: 30, kpi: 150, money: 5000, promote: 0 },
+                { name: '5G标准制定', days: 90, kpi: 400, money: 20000, promote: 0.3 },
+                { name: '鸿蒙OS开发', days: 180, kpi: 1000, money: 100000, promote: 0.7 }
+            ];
+            
+            let html = '<div class="modal-title">选择项目</div>';
+            projects.forEach((p, i) => {
+                html += `
+                    <div class="choice-btn" onclick="startProject(${i})">
+                        <div style="font-weight: bold; margin-bottom: 5px;">${p.name}</div>
+                        <div style="font-size: 12px; color: #666;">
+                            时长: ${p.days}天 | KPI: +${p.kpi} | 奖金: ¥${p.money.toLocaleString()}
+                            ${p.promote > 0 ? ` | 晋升概率: ${p.promote * 100}%` : ''}
+                        </div>
+                    </div>
+                `;
+            });
+            
+            document.getElementById('modal-description').innerHTML = html;
+            document.getElementById('modal-icon').textContent = '📋';
+            document.getElementById('modal-buttons').innerHTML = '<button class="btn btn-secondary" onclick="closeModal()">取消</button>';
+            showModalRaw();
+        }
+
+        function startProject(index) {
+            const projects = [
+                { name: '基站优化', days: 30, kpi: 150, money: 5000, promote: 0 },
+                { name: '5G标准制定', days: 90, kpi: 400, money: 20000, promote: 0.3 },
+                { name: '鸿蒙OS开发', days: 180, kpi: 1000, money: 100000, promote: 0.7 }
+            ];
+            
+            const project = projects[index];
+            closeModal();
+            
+            advanceDay(project.days);
+            gameData.kpi += project.kpi;
+            gameData.money += project.money;
+            gameData.stats.totalKPI += project.kpi;
+            gameData.stats.totalProjects++;
+            
+            let message = `获得 +${project.kpi} KPI, +¥${project.money.toLocaleString()}`;
+            
+            if (project.promote > 0 && Math.random() < project.promote) {
+                promote();
+                message += '\n\n恭喜晋升！';
+            }
+            
+            showModal('🎉', project.name + ' 完成', message);
+            updateUI();
+            saveGame();
+        }
+
+        // ==================== 专利系统 ====================
+        function applyPatent() {
+            const cost = 20000 + gameData.stats.totalPatents * 5000;
+            
+            if (gameData.money < cost) {
+                showModal('❌', '余额不足', `申请专利需要 ¥${cost.toLocaleString()}`);
+                return;
+            }
+            
+            gameData.money -= cost;
+            advanceDay(30);
+            
+            if (Math.random() < 0.7 + gameData.skills.coding * 0.05) {
+                const patentName = `专利#${gameData.patents.length + 1}`;
+                addPatent(patentName);
+                gameData.kpi += 200;
+                gameData.stats.totalKPI += 200;
+                showModal('📜', '专利申请成功！', `获得专利: ${patentName}\nKPI +200`);
+            } else {
+                showModal('😔', '专利申请失败', '很遗憾，本次申请未通过审核');
+            }
+            
+            updateUI();
+            saveGame();
+        }
+
+        function addPatent(name) {
+            gameData.patents.push({
+                name: name,
+                date: gameData.days
+            });
+            gameData.skills.patents++;
+            gameData.stats.totalPatents++;
+            updatePatentList();
+        }
+
+        function updatePatentList() {
+            const list = document.getElementById('patent-list');
+            if (gameData.patents.length === 0) {
+                list.innerHTML = '<div style="color: #999; text-align: center; padding: 20px;">还没有专利，快去申请吧！</div>';
+            } else {
+                list.innerHTML = gameData.patents.map((p, i) => 
+                    `<div class="card">
+                        <div class="card-title">📜 ${p.name}</div>
+                        <div class="card-subtitle">申请日期: 第${p.date}天</div>
+                    </div>`
+                ).join('');
+            }
+        }
+
+        // ==================== 海外派遣 ====================
+        function showOverseas() {
+            const locations = [
+                { name: '非洲肯尼亚', bonus: 1.5, risk: 0.3, duration: 365 },
+                { name: '中东沙特', bonus: 1.8, risk: 0.2, duration: 180 },
+                { name: '拉美巴西', bonus: 1.3, risk: 0.1, duration: 270 }
+            ];
+            
+            let html = '<div class="modal-title">海外派遣机会</div>';
+            locations.forEach((loc, i) => {
+                html += `
+                    <div class="choice-btn" onclick="goOverseas(${i})">
+                        <div style="font-weight: bold; margin-bottom: 5px;">🌍 ${loc.name}</div>
+                        <div style="font-size: 12px; color: #666;">
+                            时长: ${loc.duration}天 | 薪资: ${loc.bonus}x | 风险: ${loc.risk * 100}%
+                        </div>
+                        <div style="font-size: 12px; color: #4CAF50; margin-top: 3px;">
+                            晋升加速 + 艰苦补贴
+                        </div>
+                    </div>
+                `;
+            });
+            
+            document.getElementById('modal-description').innerHTML = html;
+            document.getElementById('modal-icon').textContent = '🌍';
+            document.getElementById('modal-buttons').innerHTML = '<button class="btn btn-secondary" onclick="closeModal()">取消</button>';
+            showModalRaw();
+        }
+
+        function goOverseas(index) {
+            const locations = [
+                { name: '非洲肯尼亚', bonus: 1.5, risk: 0.3, duration: 365 },
+                { name: '中东沙特', bonus: 1.8, risk: 0.2, duration: 180 },
+                { name: '拉美巴西', bonus: 1.3, risk: 0.1, duration: 270 }
+            ];
+            
+            const loc = locations[index];
+            closeModal();
+            
+            gameData.overseasLocation = loc.name;
+            advanceDay(loc.duration);
+            
+            // 计算收益
+            const baseSalary = Math.floor(gameData.salary / 12 * (loc.duration / 30));
+            const overseasBonus = Math.floor(baseSalary * (loc.bonus - 1));
+            const totalEarnings = baseSalary + overseasBonus;
+            
+            gameData.money += totalEarnings;
+            gameData.kpi += Math.floor(loc.duration * 2);
+            gameData.stats.overseasDays += loc.duration;
+            
+            // 随机事件
+            if (Math.random() < loc.risk) {
+                showModal('😰', '海外遇险', '在海外遇到突发状况，但最终化险为夷\nKPI额外 +300');
+                gameData.kpi += 300;
+                addAchievement('涉险过关');
+            } else {
+                addAchievement('海外经历');
+            }
+            
+            // 高概率晋升
+            if (Math.random() < 0.6) {
+                promote();
+                showModal('🎉', '海外归来', `圆满完成海外任务！\n收入: ¥${totalEarnings.toLocaleString()}\n并获得晋升！`);
+            } else {
+                showModal('🎉', '海外归来', `圆满完成海外任务！\n收入: ¥${totalEarnings.toLocaleString()}`);
+            }
+            
+            gameData.overseasLocation = null;
+            updateUI();
+            saveGame();
+        }
+
+        // ==================== 职业发展 ====================
+        function switchCareerPath() {
+            if (gameData.level < 15) {
+                showModal('❌', '条件不足', '需要15级以上才能切换职业通道');
+                return;
+            }
+            
+            const newPath = gameData.careerPath === 'tech' ? 'management' : 'tech';
+            const pathName = newPath === 'tech' ? '技术通道' : '管理通道';
+            
+            const buttons = `
+                <button class="btn btn-primary" onclick="confirmSwitch('${newPath}')">确认切换</button>
+                <button class="btn btn-secondary" onclick="closeModal()">取消</button>
+            `;
+            
+            showModal('🔀', '切换职业通道', `确定要切换到${pathName}吗？\n\n这将影响未来的职业发展路径`, buttons);
+        }
+
+        function confirmSwitch(newPath) {
+            gameData.careerPath = newPath;
+            const config = LEVELS[newPath][gameData.level];
+            if (config) {
+                gameData.levelName = config.name;
+                gameData.salary = config.salary;
+                gameData.kpiTarget = config.kpiTarget;
+            }
+            
+            addAchievement('职业转型');
+            showModal('✅', '切换成功', `已切换到${newPath === 'tech' ? '技术通道' : '管理通道'}`);
+            updateUI();
+            saveGame();
+        }
+
+        function showPromotionReview() {
+            if (gameData.kpi < gameData.kpiTarget * 0.8) {
+                showModal('❌', 'KPI不足', `当前KPI: ${gameData.kpi}\n需要至少: ${Math.floor(gameData.kpiTarget * 0.8)}\n\n建议先完成更多工作`);
+                return;
+            }
+            
+            showModal('🎤', '准备述职答辩', '即将进入述职答辩环节\n\n成功通过可获得晋升机会！', 
+                '<button class="btn btn-primary" onclick="startQTEGame()">开始答辩</button><button class="btn btn-secondary" onclick="closeModal()">取消</button>');
+        }
+
+        function startQTEGame() {
+            let score = 0;
+            let clicks = 0;
+            const maxClicks = 10;
+            
+            const html = `
+                <div class="qte-game">
+                    <div class="modal-title">述职答辩</div>
+                    <div class="qte-timer">剩余: <span id="qte-clicks">${maxClicks}</span> 次</div>
+                    <div style="margin: 20px 0;">点击按钮回答评委问题！</div>
+                    <button class="qte-button" style="background: #e60012;" onclick="qteClick()">💡</button>
+                    <div style="margin-top: 20px; font-size: 18px; font-weight: bold;">得分: <span id="qte-score">0</span></div>
+                </div>
+            `;
+            
+            document.getElementById('modal-description').innerHTML = html;
+            document.getElementById('modal-icon').textContent = '🎤';
+            document.getElementById('modal-buttons').innerHTML = '';
+            
+            window.qteClick = function() {
+                clicks++;
+                score += Math.floor(Math.random() * 10 + 5);
+                document.getElementById('qte-score').textContent = score;
+                document.getElementById('qte-clicks').textContent = maxClicks - clicks;
+                
+                if (clicks >= maxClicks) {
+                    endQTE(score);
+                }
+            };
+        }
+
+        function endQTE(score) {
+            delete window.qteClick;
+            
+            const passScore = 60 + gameData.skills.communication * 5;
+            
+            if (score >= passScore) {
+                promote();
+                showModal('🎉', '答辩成功！', `得分: ${score}\n评委会一致通过！\n恭喜晋升！`);
+            } else {
+                showModal('😔', '答辩失败', `得分: ${score}\n需要: ${Math.floor(passScore)}\n\n建议提升沟通能力后再试`);
+            }
+            
+            updateUI();
+            saveGame();
+        }
+
+        function showJobHopping() {
+            if (gameData.level < 15) {
+                showModal('💼', '暂无跳槽机会', '提升到15级后会有猎头联系你');
+                return;
+            }
+            
+            const companies = [
+                { name: '腾讯', salary: gameData.salary * 1.3, stock: 1000, bonus: 50000 },
+                { name: '阿里巴巴', salary: gameData.salary * 1.4, stock: 800, bonus: 80000 },
+                { name: '字节跳动', salary: gameData.salary * 1.5, stock: 500, bonus: 100000 }
+            ];
+            
+            let html = '<div class="modal-title">跳槽机会</div>';
+            companies.forEach((c, i) => {
+                html += `
+                    <div class="choice-btn" onclick="considerOffer(${i})">
+                        <div style="font-weight: bold; margin-bottom: 5px;">💼 ${c.name}</div>
+                        <div style="font-size: 12px; color: #666;">
+                            年薪: ¥${c.salary.toLocaleString()} | 股票: ${c.stock}股 | 签字费: ¥${c.bonus.toLocaleString()}
+                        </div>
+                    </div>
+                `;
+            });
+            html += '<div style="margin-top: 15px; color: #999; font-size: 12px; text-align: center;">跳槽将重置当前进度</div>';
+            
+            document.getElementById('modal-description').innerHTML = html;
+            document.getElementById('modal-icon').textContent = '💼';
+            document.getElementById('modal-buttons').innerHTML = '<button class="btn btn-secondary" onclick="closeModal()">继续留在华为</button>';
+            showModalRaw();
+        }
+
+        function considerOffer(index) {
+            const companies = [
+                { name: '腾讯', salary: gameData.salary * 1.3, stock: 1000, bonus: 50000 },
+                { name: '阿里巴巴', salary: gameData.salary * 1.4, stock: 800, bonus: 80000 },
+                { name: '字节跳动', salary: gameData.salary * 1.5, stock: 500, bonus: 100000 }
+            ];
+            
+            const company = companies[index];
+            
+            showModal('🤔', '重要决定', 
+                `接受${company.name}的offer？\n\n你将获得:\n- 年薪: ¥${company.salary.toLocaleString()}\n- 股票: ${company.stock}股\n- 签字费: ¥${company.bonus.toLocaleString()}\n\n但会失去当前华为的所有积累`,
+                `<button class="btn btn-primary" onclick="acceptOffer(${index})">接受offer</button>
+                 <button class="btn btn-secondary" onclick="closeModal()">拒绝</button>`
+            );
+        }
+
+        function acceptOffer(index) {
+            const companies = [
+                { name: '腾讯', salary: gameData.salary * 1.3, stock: 1000, bonus: 50000 },
+                { name: '阿里巴巴', salary: gameData.salary * 1.4, stock: 800, bonus: 80000 },
+                { name: '字节跳动', salary: gameData.salary * 1.5, stock: 500, bonus: 100000 }
+            ];
+            
+            const company = companies[index];
+            
+            gameData.money += company.bonus;
+            gameData.salary = company.salary;
+            addAchievement(`跳槽到${company.name}`);
+            
+            showModal('🎊', '新的开始', `你加入了${company.name}！\n\n收到签字费: ¥${company.bonus.toLocaleString()}\n新年薪: ¥${company.salary.toLocaleString()}\n\n游戏结束 - 感谢游玩！`);
+            
+            updateUI();
+            saveGame();
+        }
+
+        // ==================== 买车系统 ====================
+        function buyCar(type) {
+            const cars = {
+                porsche: { 
+                    name: '保时捷911', 
+                    price: 1500000, 
+                    levelRequired: 16,
+                    discount: 1.0 
+                },
+                wenjie: { 
+                    name: '华为问界M9', 
+                    price: 500000, 
+                    levelRequired: 0,
+                    discount: 0.85  // 华为员工15%折扣
+                },
+                aito: { 
+                    name: 'AITO问界M7', 
+                    price: 300000, 
+                    levelRequired: 0,
+                    discount: 0.85
+                }
+            };
+            
+            if (gameData.cars[type]) {
+                showModal('ℹ️', '已拥有', `你已经拥有${cars[type].name}了`);
+                return;
+            }
+            
+            const car = cars[type];
+            const actualPrice = Math.floor(car.price * car.discount);
+            
+            // 检查职级
+            if (car.levelRequired > 0 && gameData.level < car.levelRequired) {
+                showModal('🔒', '职级不足', `购买${car.name}需要${car.levelRequired}级以上\n当前职级: ${gameData.level}级`);
+                return;
+            }
+            
+            if (gameData.money < actualPrice) {
+                showModal('❌', '余额不足', `需要: ¥${actualPrice.toLocaleString()}\n当前存款: ¥${gameData.money.toLocaleString()}`);
+                return;
+            }
+            
+            const buttons = `
+                <button class="btn btn-primary" onclick="confirmBuyCar('${type}')">确认购买</button>
+                <button class="btn btn-secondary" onclick="closeModal()">取消</button>
+            `;
+            
+            let description = `${car.name}\n售价: ¥${actualPrice.toLocaleString()}`;
+            
+            if (car.discount < 1.0) {
+                description += `\n🎁 华为员工优惠: ${Math.floor((1 - car.discount) * 100)}% OFF`;
+                description += `\n原价: ¥${car.price.toLocaleString()}`;
+            }
+            
+            if (type === 'porsche') {
+                description += '\n\n🏎️ 保时捷911，成功人士的标配\n购买后解锁"豪车一族"成就！';
+            } else if (type === 'wenjie') {
+                description += '\n\n🚙 华为问界M9，鸿蒙智能座舱\n支持国产！解锁"华为全家桶"成就！';
+            } else {
+                description += '\n\n🚗 问界M7，性价比之选\n解锁"有车一族"成就！';
+            }
+            
+            showModal('🚗', `购买${car.name}`, description, buttons);
+        }
+
+        function confirmBuyCar(type) {
+            const cars = {
+                porsche: { name: '保时捷911', price: 1500000, discount: 1.0 },
+                wenjie: { name: '华为问界M9', price: 500000, discount: 0.85 },
+                aito: { name: 'AITO问界M7', price: 300000, discount: 0.85 }
+            };
+            
+            const car = cars[type];
+            const actualPrice = Math.floor(car.price * car.discount);
+            
+            gameData.money -= actualPrice;
+            gameData.cars[type] = true;
+            
+            addAchievement(`购车-${car.name}`);
+            
+            if (type === 'porsche') {
+                addAchievement('豪车一族');
+            } else if (type === 'wenjie' || type === 'aito') {
+                addAchievement('支持国产');
+                // 检查是否有华为全家桶
+                if (gameData.cars.wenjie && gameData.cars.aito) {
+                    addAchievement('华为全家桶');
+                }
+            }
+            
+            if (Object.values(gameData.cars).filter(Boolean).length >= 2) {
+                addAchievement('车库收藏家');
+            }
+            
+            showModal('🎉', '购车成功', `恭喜购买${car.name}！\n支付: ¥${actualPrice.toLocaleString()}`);
+            
+            updateCarStatus();
+            updateUI();
+            saveGame();
+        }
+
+        function updateCarStatus() {
+            document.getElementById('porsche-owned').innerHTML = gameData.cars.porsche ? '<span class="property-owned">已拥有</span>' : '';
+            document.getElementById('wenjie-owned').innerHTML = gameData.cars.wenjie ? '<span class="property-owned">已拥有</span>' : '';
+            document.getElementById('aito-owned').innerHTML = gameData.cars.aito ? '<span class="property-owned">已拥有</span>' : '';
+            
+            const carNames = [];
+            if (gameData.cars.porsche) carNames.push('保时捷911');
+            if (gameData.cars.wenjie) carNames.push('问界M9');
+            if (gameData.cars.aito) carNames.push('问界M7');
+            
+            document.getElementById('car-status').textContent = carNames.length > 0 ? carNames.join(' + ') : '无车';
+        }
+
+        // ==================== 生活系统 ====================
+        function buyHouse(type) {
+            const houses = {
+                shenzhenwan: { name: '深圳湾豪宅大平层', price: 25000000, mortgage: 78000, levelRequired: 18 },
+                shenzhen: { name: '深圳南山区', price: 8000000, mortgage: 25000, levelRequired: 0 },
+                dongguan: { name: '东莞松山湖', price: 3000000, mortgage: 9500, levelRequired: 0 },
+                hometown: { name: '老家县城', price: 500000, mortgage: 0, levelRequired: 0 }
+            };
+            
+            if (gameData.houses[type]) {
+                showModal('ℹ️', '已拥有', `你已经拥有${houses[type].name}的房产了`);
+                return;
+            }
+            
+            const house = houses[type];
+            
+            // 检查职级要求（深圳湾需要18级以上）
+            if (house.levelRequired > 0 && gameData.level < house.levelRequired) {
+                showModal('🔒', '职级不足', `购买${house.name}需要${house.levelRequired}级以上\n当前职级: ${gameData.level}级\n\n这是顶级富人区，只有Fellow级别才能入住！`);
+                return;
+            }
+            
+            if (gameData.money < house.price * 0.3) {
+                showModal('❌', '首付不足', `需要首付: ¥${(house.price * 0.3).toLocaleString()}\n当前存款: ¥${gameData.money.toLocaleString()}`);
+                return;
+            }
+            
+            const buttons = `
+                <button class="btn btn-primary" onclick="confirmBuyHouse('${type}')">确认购买</button>
+                <button class="btn btn-secondary" onclick="closeModal()">取消</button>
+            `;
+            
+            let description = `总价: ¥${house.price.toLocaleString()}\n首付(30%): ¥${(house.price * 0.3).toLocaleString()}\n${house.mortgage > 0 ? `月供: ¥${house.mortgage.toLocaleString()}` : '全款购买'}`;
+            
+            if (type === 'shenzhenwan') {
+                description += '\n\n🌟 深圳顶级豪宅，200㎡海景大平层\n俯瞰深圳湾，富人区象征\n购买后解锁"人生赢家"成就！';
+            }
+            
+            showModal('🏠', `购买${house.name}`, description, buttons);
+        }
+
+        function confirmBuyHouse(type) {
+            const houses = {
+                shenzhenwan: { name: '深圳湾豪宅大平层', price: 25000000, mortgage: 78000, levelRequired: 18 },
+                shenzhen: { name: '深圳南山区', price: 8000000, mortgage: 25000, levelRequired: 0 },
+                dongguan: { name: '东莞松山湖', price: 3000000, mortgage: 9500, levelRequired: 0 },
+                hometown: { name: '老家县城', price: 500000, mortgage: 0, levelRequired: 0 }
+            };
+            
+            const house = houses[type];
+            const downPayment = type === 'hometown' ? house.price : house.price * 0.3;
+            
+            gameData.money -= downPayment;
+            gameData.houses[type] = true;
+            
+            addAchievement(`买房-${house.name}`);
+            
+            // 特殊成就
+            if (type === 'shenzhenwan') {
+                addAchievement('人生赢家');
+                addAchievement('深圳湾业主');
+            }
+            
+            if (Object.values(gameData.houses).filter(Boolean).length === 4) {
+                addAchievement('房产大亨Plus');
+            } else if (Object.values(gameData.houses).filter(Boolean).length === 3) {
+                addAchievement('房产大亨');
+            }
+            
+            let congratsMsg = `恭喜购买${house.name}！\n支付首付: ¥${downPayment.toLocaleString()}`;
+            
+            if (type === 'shenzhenwan') {
+                congratsMsg += '\n\n🎊 解锁"人生赢家"成就！\n你已经站在深圳的顶端！';
+            }
+            
+            showModal('🎉', '购房成功', congratsMsg);
+            
+            updateHouseStatus();
+            updateUI();
+            saveGame();
+        }
+
+        function updateHouseStatus() {
+            document.getElementById('shenzhenwan-owned').innerHTML = gameData.houses.shenzhenwan ? '<span class="property-owned">已拥有</span>' : '';
+            document.getElementById('shenzhen-owned').innerHTML = gameData.houses.shenzhen ? '<span class="property-owned">已拥有</span>' : '';
+            document.getElementById('dongguan-owned').innerHTML = gameData.houses.dongguan ? '<span class="property-owned">已拥有</span>' : '';
+            document.getElementById('hometown-owned').innerHTML = gameData.houses.hometown ? '<span class="property-owned">已拥有</span>' : '';
+            
+            const houseCount = Object.values(gameData.houses).filter(Boolean).length;
+            let houseStatusText = '无房产';
+            
+            if (houseCount > 0) {
+                const houseNames = [];
+                if (gameData.houses.shenzhenwan) houseNames.push('深圳湾豪宅');
+                if (gameData.houses.shenzhen) houseNames.push('南山');
+                if (gameData.houses.dongguan) houseNames.push('东莞');
+                if (gameData.houses.hometown) houseNames.push('老家');
+                
+                houseStatusText = houseNames.join(' + ');
+            }
+            
+            document.getElementById('house-status').textContent = houseStatusText;
+        }
+
+        function findPartner(type) {
+            if (gameData.married) {
+                showModal('💑', '已婚', '你已经结婚了！');
+                return;
+            }
+            
+            const partners = {
+                internal: { 
+                    name: '华为同事', 
+                    effect: '工作效率+10%',
+                    buff: 1.1
+                },
+                external: { 
+                    name: '外部恋人', 
+                    effect: '生活平衡',
+                    buff: 1.0
+                }
+            };
+            
+            const partner = partners[type];
+            
+            const buttons = `
+                <button class="btn btn-primary" onclick="confirmMarriage('${type}')">确定</button>
+                <button class="btn btn-secondary" onclick="closeModal()">取消</button>
+            `;
+            
+            showModal('💑', '结婚', `对象: ${partner.name}\n效果: ${partner.effect}\n\n确定要结婚吗？`, buttons);
+        }
+
+        function confirmMarriage(type) {
+            gameData.married = true;
+            gameData.marriageType = type;
+            
+            const partners = {
+                internal: '华为同事',
+                external: '外部恋人'
+            };
+            
+            addAchievement(`结婚-${partners[type]}`);
+            
+            showModal('💑', '新婚快乐', `恭喜你和${partners[type]}结婚了！\n\n开启人生新篇章！`);
+            
+            document.getElementById('marriage-status').textContent = partners[type];
+            updateUI();
+            saveGame();
+        }
+
+        // ==================== 买车系统 ====================
+        function buyCar(type) {
+            const cars = {
+                porsche: { name: '保时捷911', price: 1500000, levelRequired: 16 },
+                wenjie: { name: '华为问界M9', price: 500000, levelRequired: 0, discount: 0.9 },
+                aito: { name: 'AITO问界M7', price: 300000, levelRequired: 0, discount: 0.85 }
+            };
+            
+            if (gameData.cars[type]) {
+                showModal('ℹ️', '已拥有', `你已经拥有${cars[type].name}了`);
+                return;
+            }
+            
+            const car = cars[type];
+            
+            // 检查职级要求
+            if (car.levelRequired > 0 && gameData.level < car.levelRequired) {
+                showModal('🔒', '职级不足', `购买${car.name}需要${car.levelRequired}级以上\n当前职级: ${gameData.level}级`);
+                return;
+            }
+            
+            // 华为员工折扣
+            let finalPrice = car.price;
+            if (car.discount) {
+                finalPrice = Math.floor(car.price * car.discount);
+            }
+            
+            if (gameData.money < finalPrice) {
+                showModal('❌', '余额不足', `购买${car.name}需要: ¥${finalPrice.toLocaleString()}\n当前存款: ¥${gameData.money.toLocaleString()}`);
+                return;
+            }
+            
+            const buttons = `
+                <button class="btn btn-primary" onclick="confirmBuyCar('${type}')">确认购买</button>
+                <button class="btn btn-secondary" onclick="closeModal()">取消</button>
+            `;
+            
+            let description = `售价: ¥${car.price.toLocaleString()}`;
+            if (car.discount) {
+                const discount = Math.floor((1 - car.discount) * 100);
+                description += `\n华为员工${discount}折: ¥${finalPrice.toLocaleString()}`;
+            }
+            
+            if (type === 'porsche') {
+                description += '\n\n🏎️ 经典跑车，彰显成功\n0-100km/h 仅需3.0秒！';
+            } else if (type === 'wenjie') {
+                description += '\n\n🚙 搭载鸿蒙座舱，智能驾驶\n华为员工专属优惠！';
+            } else if (type === 'aito') {
+                description += '\n\n🚗 性价比之选，智能化配置\n新人最佳选择！';
+            }
+            
+            showModal('🚗', `购买${car.name}`, description, buttons);
+        }
+
+        function confirmBuyCar(type) {
+            const cars = {
+                porsche: { name: '保时捷911', price: 1500000, levelRequired: 16 },
+                wenjie: { name: '华为问界M9', price: 500000, levelRequired: 0, discount: 0.9 },
+                aito: { name: 'AITO问界M7', price: 300000, levelRequired: 0, discount: 0.85 }
+            };
+            
+            const car = cars[type];
+            let finalPrice = car.price;
+            if (car.discount) {
+                finalPrice = Math.floor(car.price * car.discount);
+            }
+            
+            gameData.money -= finalPrice;
+            gameData.cars[type] = true;
+            
+            addAchievement(`购车-${car.name}`);
+            
+            // 特殊成就
+            if (type === 'porsche') {
+                addAchievement('人生赢家-座驾');
+            }
+            
+            const carsOwned = Object.values(gameData.cars).filter(Boolean).length;
+            if (carsOwned === 3) {
+                addAchievement('车库大亨');
+            }
+            
+            let congratsMsg = `恭喜购买${car.name}！\n支付: ¥${finalPrice.toLocaleString()}`;
+            
+            if (car.discount) {
+                const saved = car.price - finalPrice;
+                congratsMsg += `\n节省: ¥${saved.toLocaleString()}`;
+            }
+            
+            showModal('🎉', '购车成功', congratsMsg);
+            
+            updateCarStatus();
+            updateUI();
+            saveGame();
+        }
+
+        function updateCarStatus() {
+            document.getElementById('porsche-owned').innerHTML = gameData.cars.porsche ? '<span class="property-owned">已拥有</span>' : '';
+            document.getElementById('wenjie-owned').innerHTML = gameData.cars.wenjie ? '<span class="property-owned">已拥有</span>' : '';
+            document.getElementById('aito-owned').innerHTML = gameData.cars.aito ? '<span class="property-owned">已拥有</span>' : '';
+            
+            const carCount = Object.values(gameData.cars).filter(Boolean).length;
+            let carStatusText = '无车';
+            
+            if (carCount > 0) {
+                const carNames = [];
+                if (gameData.cars.porsche) carNames.push('保时捷');
+                if (gameData.cars.wenjie) carNames.push('问界M9');
+                if (gameData.cars.aito) carNames.push('问界M7');
+                
+                carStatusText = carNames.join(' + ');
+            }
+            
+            document.getElementById('car-status').textContent = carStatusText;
+        }
+
+        // ==================== 股票系统 ====================
+        function updateStock() {
+            // 随机股价波动
+            const change = (Math.random() - 0.48) * 10;
+            gameData.stockPrice = Math.max(50, Math.min(300, gameData.stockPrice + change));
+            gameData.stockHistory.push(gameData.stockPrice);
+            
+            // 只保留最近100个数据点
+            if (gameData.stockHistory.length > 100) {
+                gameData.stockHistory.shift();
+            }
+            
+            document.getElementById('current-stock-price').textContent = `¥${Math.floor(gameData.stockPrice)}`;
+            document.getElementById('stock-value').textContent = `¥${Math.floor(gameData.stock * gameData.stockPrice).toLocaleString()}`;
+            
+            drawStockChart();
+        }
+
+        function drawStockChart() {
+            const canvas = document.getElementById('stock-canvas');
+            if (!canvas) return;
+            
+            const ctx = canvas.getContext('2d');
+            const width = canvas.width;
+            const height = canvas.height;
+            
+            ctx.clearRect(0, 0, width, height);
+            
+            if (gameData.stockHistory.length < 2) return;
+            
+            // 计算比例
+            const max = Math.max(...gameData.stockHistory);
+            const min = Math.min(...gameData.stockHistory);
+            const range = max - min || 1;
+            
+            // 绘制线条
+            ctx.beginPath();
+            ctx.strokeStyle = '#e60012';
+            ctx.lineWidth = 2;
+            
+            gameData.stockHistory.forEach((price, i) => {
+                const x = (i / (gameData.stockHistory.length - 1)) * (width - 40) + 20;
+                const y = height - 20 - ((price - min) / range) * (height - 40);
+                
+                if (i === 0) {
+                    ctx.moveTo(x, y);
+                } else {
+                    ctx.lineTo(x, y);
+                }
+            });
+            
+            ctx.stroke();
+            
+            // 绘制填充
+            ctx.lineTo(width - 20, height - 20);
+            ctx.lineTo(20, height - 20);
+            ctx.closePath();
+            ctx.fillStyle = 'rgba(230, 0, 18, 0.1)';
+            ctx.fill();
+        }
+
+        function buyStock() {
+            const stockAmount = 10000; // 1万股
+            const cost = gameData.stockPrice * stockAmount;
+            
+            if (gameData.money < cost) {
+                showModal('❌', '余额不足', `购买1万股需要: ¥${Math.floor(cost).toLocaleString()}`);
+                return;
+            }
+            
+            gameData.money -= cost;
+            gameData.stock += 1; // stock字段以万股为单位
+            
+            showModal('✅', '购买成功', `以¥${Math.floor(gameData.stockPrice)}/股的价格购买了1万股\n花费: ¥${Math.floor(cost).toLocaleString()}`);
+            updateUI();
+            saveGame();
+        }
+
+        function sellStock() {
+            if (gameData.stock < 1) {
+                showModal('❌', '股票不足', '你没有足够的股票出售（需要至少1万股）');
+                return;
+            }
+            
+            const stockAmount = 10000; // 1万股
+            const earnings = gameData.stockPrice * stockAmount;
+            gameData.money += earnings;
+            gameData.stock -= 1; // stock字段以万股为单位
+            
+            showModal('✅', '卖出成功', `以¥${Math.floor(gameData.stockPrice)}/股的价格卖出了1万股\n获得: ¥${Math.floor(earnings).toLocaleString()}`);
+            updateUI();
+            saveGame();
+        }
+
+        // ==================== 通用功能 ====================
+        function advanceDay(days) {
+            gameData.days += days;
+            gameData.daysUntilReview -= days;
+
+            // 月供扣款
+            const monthsPassed = Math.floor(gameData.days / 30) - Math.floor((gameData.days - days) / 30);
+            if (monthsPassed > 0) {
+                // 工资
+                const monthlySalary = Math.floor(gameData.salary / 12);
+                let actualSalary = monthlySalary;
+                
+                // 内部结婚加成
+                if (gameData.married && gameData.marriageType === 'internal') {
+                    actualSalary = Math.floor(monthlySalary * 1.1);
+                }
+                
+                gameData.money += actualSalary;
+                
+                // 房贷
+                let mortgage = 0;
+                if (gameData.houses.shenzhenwan) mortgage += 78000;
+                if (gameData.houses.shenzhen) mortgage += 25000;
+                if (gameData.houses.dongguan) mortgage += 9500;
+                gameData.money -= mortgage;
+            }
+
+            // 年度考核
+            if (gameData.daysUntilReview <= 0) {
+                yearlyReview();
+            }
+        }
+
+        function yearlyReview() {
+            gameData.daysUntilReview = 365;
+            
+            if (gameData.kpi >= gameData.kpiTarget * 1.5) {
+                // 超额完成150%
+                gameData.performance = 'A+';
+                showModal('🏆', '年度考核: A+', '卓越！绩效评级A+，直接晋升！');
+                promote();
+                addAchievement('年度A+');
+            } else if (gameData.kpi >= gameData.kpiTarget * 1.2) {
+                // 超额完成120%
+                gameData.performance = 'A';
+                showModal('🏆', '年度考核: A', '优秀！绩效评级A，获得晋升');
+                promote();
+            } else if (gameData.kpi >= gameData.kpiTarget) {
+                // 完成目标
+                gameData.performance = 'B+';
+                showModal('👍', '年度考核: B+', '良好！达成目标');
+                if (Math.random() < 0.4) promote();
+            } else if (gameData.kpi >= gameData.kpiTarget * 0.8) {
+                // 完成80%
+                gameData.performance = 'B';
+                showModal('😐', '年度考核: B', '中等。需要更加努力');
+                if (Math.random() < 0.1) promote();
+            } else if (gameData.kpi >= gameData.kpiTarget * 0.5) {
+                // 完成50-80%
+                gameData.performance = 'B-';
+                showModal('😟', '年度考核: B-', '不佳。需要明显改进');
+            } else {
+                // 低于50%，重大失误
+                gameData.performance = 'C';
+                showModal('😰', '年度考核: C', '⚠️ 警告！严重不达标，已进入PIP（绩效改进计划）\n\n如果明年再次C，将面临淘汰风险！');
+                addAchievement('收到警告');
+            }
+
+            gameData.kpi = 0;
+        }
+
+        function promote() {
+            const maxLevel = gameData.careerPath === 'tech' ? 20 : 22;
+            
+            if (gameData.level >= maxLevel) {
+                showModal('🎊', '已达最高职级', '恭喜！');
+                return;
+            }
+
+            gameData.level++;
+            const newLevel = LEVELS[gameData.careerPath][gameData.level];
+            
+            if (newLevel) {
+                gameData.levelName = newLevel.name;
+                gameData.salary = newLevel.salary;
+                gameData.kpiTarget = newLevel.kpiTarget;
+            }
+            
+            gameData.stats.promotions++;
+            addAchievement(`晋升到${gameData.level}级`);
+            
+            showModal('🚀', '晋升成功！', `恭喜晋升到 ${gameData.level}级 ${gameData.levelName}\n年薪：¥${gameData.salary.toLocaleString()}`);
+        }
+
+        function checkRandomEvent(probability) {
+            if (Math.random() < probability) {
+                const event = EVENTS[Math.floor(Math.random() * EVENTS.length)];
+                showModal(event.icon, event.title, event.desc);
+                event.effect();
+            }
+        }
+
+        function addAchievement(name) {
+            if (!gameData.achievements.includes(name)) {
+                gameData.achievements.push(name);
+                updateAchievements();
+            }
+        }
+
+        function updateAchievements() {
+            const list = document.getElementById('achievement-list');
+            if (gameData.achievements.length === 0) {
+                list.innerHTML = '<div style="color: #999; text-align: center; padding: 20px;">努力工作，解锁成就！</div>';
+            } else {
+                list.innerHTML = gameData.achievements.map(a => 
+                    `<span class="achievement-badge">${a}</span>`
+                ).join('');
+            }
+        }
+
+        // ==================== UI ====================
+        function switchTab(tabName) {
+            // 切换标签激活状态
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // 切换内容
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            document.getElementById(tabName + '-tab').classList.add('active');
+        }
+
+        function updateUI() {
+            // 基础信息
+            document.getElementById('player-name').textContent = gameData.playerName || '加载中...';
+            document.getElementById('level').textContent = `${gameData.level}级 ${gameData.levelName}`;
+            document.getElementById('career-path').textContent = gameData.careerPath === 'tech' ? '技术通道' : '管理通道';
+            document.getElementById('salary').textContent = `¥${gameData.salary.toLocaleString()}`;
+            document.getElementById('performance').textContent = gameData.performance;
+            
+            // 股票信息（以万股为单位显示）
+            const totalStockValue = gameData.stock * 10000 * gameData.stockPrice;
+            document.getElementById('stock').textContent = `${gameData.stock} 万股`;
+            document.getElementById('stock-value').textContent = `¥${Math.floor(totalStockValue).toLocaleString()}`;
+            document.getElementById('stock-amount').textContent = gameData.stock;
+            document.getElementById('total-stock-value').textContent = `¥${Math.floor(totalStockValue).toLocaleString()}`;
+            document.getElementById('buy-cost').textContent = `¥${Math.floor(gameData.stockPrice * 10000).toLocaleString()}`;
+            
+            document.getElementById('money').textContent = `¥${Math.floor(gameData.money).toLocaleString()}`;
+            document.getElementById('days').textContent = `${Math.floor(gameData.days)} 天`;
+
+            // 进度条
+            const kpiPercent = Math.min(100, (gameData.kpi / gameData.kpiTarget) * 100);
+            document.getElementById('kpi-progress').style.width = kpiPercent + '%';
+            document.getElementById('kpi-progress').textContent = `${Math.floor(gameData.kpi)} / ${gameData.kpiTarget}`;
+
+            const yearPercent = Math.max(0, (gameData.daysUntilReview / 365) * 100);
+            document.getElementById('year-progress').style.width = yearPercent + '%';
+            document.getElementById('year-progress').textContent = `${Math.floor(gameData.daysUntilReview)} 天`;
+
+            // 职业信息
+            document.getElementById('current-path').textContent = gameData.careerPath === 'tech' ? '技术通道' : '管理通道';
+            document.getElementById('switch-requirement').textContent = gameData.level >= 15 ? '可以切换通道' : '15级以上可切换';
+            document.getElementById('job-offers').textContent = gameData.level >= 15 ? '有公司向你抛出橄榄枝' : '暂无offer';
+
+            // 专利成本
+            const patentCost = 20000 + gameData.stats.totalPatents * 5000;
+            document.getElementById('patent-cost').textContent = `¥${patentCost.toLocaleString()}`;
+
+            // 统计
+            document.getElementById('stat-total-kpi').textContent = Math.floor(gameData.stats.totalKPI).toLocaleString();
+            document.getElementById('stat-total-projects').textContent = gameData.stats.totalProjects;
+            document.getElementById('stat-total-patents').textContent = gameData.stats.totalPatents;
+            document.getElementById('stat-promotions').textContent = gameData.stats.promotions;
+
+            // 排行榜
+            document.getElementById('your-rank-info').textContent = `${gameData.level}级 ${gameData.levelName}`;
+            document.getElementById('your-rank-days').textContent = `工龄: ${Math.floor(gameData.days)}天`;
+
+            // 生活
+            updateHouseStatus();
+            updateCarStatus();
+            updatePatentList();
+            updateAchievements();
+        }
+
+        // ==================== 模态框 ====================
+        function showModal(icon, title, description, buttons = null) {
+            document.getElementById('modal-icon').textContent = icon;
+            document.getElementById('modal-title').textContent = title;
+            document.getElementById('modal-description').textContent = description;
+            document.getElementById('modal-buttons').innerHTML = buttons || '<button class="btn btn-primary" onclick="closeModal()">确定</button>';
+            document.getElementById('modal').classList.add('show');
+        }
+
+        function showModalRaw() {
+            document.getElementById('modal').classList.add('show');
+        }
+
+        function closeModal() {
+            document.getElementById('modal').classList.remove('show');
+        }
+
+        // ==================== 存档 ====================
+        function saveGame() {
+            localStorage.setItem('huaweiGameV3', JSON.stringify(gameData));
+        }
+
+        function loadGame() {
+            const saved = localStorage.getItem('huaweiGameV3');
+            if (saved) {
+                gameData = JSON.parse(saved);
+            }
+        }
+
+        function resetGame() {
+            if (confirm('确定要重置游戏吗？所有进度将丢失！')) {
+                localStorage.removeItem('huaweiGameV3');
+                location.reload();
+            }
+        }
+
+        // 启动游戏
+        init();
+    </script>
+</body>
+</html>
